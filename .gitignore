@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Тесты и покрытие
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# Виртуальное окружение
+.env
+!.env.example
+.venv
+env/
+venv/
+
+# Django
+*.log
+local_settings.py
+
+# IDE
+.vscode/
+.idea/
+
+# Прочее
+.mypy_cache/
+.DS_Store
