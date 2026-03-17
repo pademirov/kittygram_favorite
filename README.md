@@ -4,8 +4,8 @@
 
 ### 1. Клонируй репозиторий и перейди в него
 ```bash
-git clone https://github.com/pademirov/kittygram_backend.git
-cd kittygram_backend
+git clone https://github.com/pademirov/kittygram_favorite.git
+cd kittygram_favorites
 ```
 
 ### 2. Создай и активируй виртуальное окружение
