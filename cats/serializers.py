@@ -7,7 +7,7 @@ import webcolors
 
 import datetime as dt
 
-from .models import Achievement, AchievementCat, Cat
+from .models import Achievement, AchievementCat, Cat, Like
 
 
 class Hex2NameColor(serializers.Field):
@@ -40,17 +40,26 @@ class Base64ImageField(serializers.ImageField):
         return super().to_internal_value(data)
 
 
+class LikeUserSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username')
+
+    class Meta:
+        model = Like
+        fields = ('username',)
+
+
 class CatSerializer(serializers.ModelSerializer):
     achievements = AchievementSerializer(required=False, many=True)
     color = Hex2NameColor()
     age = serializers.SerializerMethodField()
     image = Base64ImageField(required=False, allow_null=True)
+    likes_count = serializers.IntegerField(source='likes.count', read_only=True)
+    liked_by = LikeUserSerializer(source='likes', many=True, read_only=True)
     
     class Meta:
         model = Cat
         fields = (
-            'id', 'name', 'color', 'birth_year', 'achievements', 'owner', 'age',
-            'image'
+            'id', 'name', 'color', 'birth_year', 'achievements', 'owner', 'age', 'image', 'likes_count', 'liked_by'
             )
         read_only_fields = ('owner',)
 
@@ -92,3 +101,10 @@ class CatSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+    
+
+class LikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Like
+        fields = ('id', 'user', 'cat')
+        read_only_fields = ('user',)
