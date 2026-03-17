@@ -54,6 +54,8 @@ python manage.py runserver
 | social-auth-app-django | 5.7.0 | Авторизация через соцсети |
 | gunicorn | 21.2.0 | WSGI-сервер для продакшна |
 | python-dotenv | 1.0.1 | Загрузка переменных из .env файла |
+| django-filter | 24.3 | Фильтрация и сортировка queryset |
+| drf-spectacular | 0.27.2 | Автогенерация OpenAPI схемы и Swagger UI |
 | requests | 2.32.5 | HTTP-запросы |
 | asgiref | 3.11.1 | ASGI-совместимость |
 | sqlparse | 0.5.5 | Парсинг SQL-запросов |
