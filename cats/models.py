@@ -54,3 +54,20 @@ class Like(models.Model):
 
     def __str__(self):
         return f'{self.user} {self.cat}'
+    
+
+class Favorite(models.Model):
+    user = models.ForeignKey(
+        User, related_name='favorites',
+        on_delete=models.CASCADE
+    )
+    cat = models.ForeignKey(
+        Cat, related_name='favorites',
+        on_delete=models.CASCADE
+    )
+
+    class Meta:
+        unique_together = ('user', 'cat')
+
+    def __str__(self):
+        return f'{self.user} {self.cat}'

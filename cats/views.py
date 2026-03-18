@@ -8,7 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 
 from .permissions import IsOwnerOrReadOnly
-from .models import Achievement, Cat, Like
+from .models import Achievement, Cat, Like, Favorite
 from .filters import CatFilter
 
 from .serializers import AchievementSerializer, CatSerializer
@@ -35,16 +35,6 @@ class CatViewSet(viewsets.ModelViewSet):
             like.delete()
             return Response({'detail': 'Лайк убран.'})
         return Response({'detail': 'Лайк поставлен.'})
-
-    @action(detail=False, methods=['get'])
-    def my_likes(self, request):
-        cats = Cat.objects.filter(likes__user=request.user)
-        page = self.paginate_queryset(cats)
-        if page is not None:
-            serializer = CatSerializer(page, many=True, context={'request': request})
-            return self.get_paginated_response(serializer.data)
-        serializer = CatSerializer(cats, many=True, context={'request': request})
-        return Response(serializer.data)
     
     @action(detail=False, methods=['get'])
     def top(self, request):
@@ -53,14 +43,33 @@ class CatViewSet(viewsets.ModelViewSet):
         ).order_by('-likes_count')
         page = self.paginate_queryset(cats)
         if page is not None:
-            serializer = CatSerializer(page, many=True)
+            serializer = CatSerializer(page, many=True, context={'request': request})
             return self.get_paginated_response(serializer.data)
-        serializer = CatSerializer(cats, many=True)
+        serializer = CatSerializer(cats, many=True, context={'request': request})
         return Response(serializer.data)
     
     @action(detail=False, methods=['get'])
     def my_cats(self, request):
         cats = Cat.objects.filter(owner=request.user).annotate(likes_count=Count('likes'))
+        page = self.paginate_queryset(cats)
+        if page is not None:
+            serializer = CatSerializer(page, many=True, context={'request': request})
+            return self.get_paginated_response(serializer.data)
+        serializer = CatSerializer(cats, many=True, context={'request': request})
+        return Response(serializer.data)
+    
+    @action(detail=True, methods=['post'])
+    def favorite(self, request, pk=None):
+        cat = self.get_object()
+        favorite, created = Favorite.objects.get_or_create(user=request.user, cat=cat)
+        if not created:
+            favorite.delete()
+            return Response({'detail': 'Удалено из избранного.'})
+        return Response({'detail': 'Добавлено в избранное.'})
+
+    @action(detail=False, methods=['get'])
+    def favorites(self, request):
+        cats = Cat.objects.filter(favorites__user=request.user).annotate(likes_count=Count('likes'))
         page = self.paginate_queryset(cats)
         if page is not None:
             serializer = CatSerializer(page, many=True, context={'request': request})

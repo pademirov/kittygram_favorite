@@ -4,6 +4,6 @@ class IsOwnerOrReadOnly(BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method in SAFE_METHODS:
             return True
-        if view.action == 'like':
+        if view.action in ('like', 'favorite'):
             return True
         return obj.owner == request.user

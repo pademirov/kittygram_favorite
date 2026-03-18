@@ -55,11 +55,12 @@ class CatSerializer(serializers.ModelSerializer):
     image = Base64ImageField(required=False, allow_null=True)
     likes_count = serializers.IntegerField(source='likes.count', read_only=True)
     liked_by = LikeUserSerializer(source='likes', many=True, read_only=True)
+    is_favorite = serializers.SerializerMethodField()
     
     class Meta:
         model = Cat
         fields = (
-            'id', 'name', 'color', 'birth_year', 'achievements', 'owner', 'age', 'image', 'likes_count', 'liked_by'
+            'id', 'name', 'color', 'birth_year', 'achievements', 'owner', 'age', 'image', 'likes_count', 'liked_by', 'is_favorite'
             )
         read_only_fields = ('owner',)
 
@@ -101,6 +102,12 @@ class CatSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+    
+    def get_is_favorite(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return obj.favorites.filter(user=request.user).exists()
+        return False
     
 
 class LikeSerializer(serializers.ModelSerializer):
