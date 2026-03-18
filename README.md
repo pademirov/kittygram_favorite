@@ -28,12 +28,24 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 4. Примени миграции
+### 4. Настрой переменные окружения
+
+Скопируй `.env.example` в `.env`:
+```bash
+cp .env.example .env
+```
+
+Открой `.env` и заполни переменные. `SECRET_KEY` можно сгенерировать командой:
+```bash
+python -c "import secrets; print(secrets.token_urlsafe(50))"
+```
+
+### 5. Примени миграции
 ```bash
 python manage.py migrate
 ```
 
-### 5. Запусти сервер
+### 6. Запусти сервер
 ```bash
 python manage.py runserver
 ```
